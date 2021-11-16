@@ -3,12 +3,12 @@
     "pageNumber": 47,
     "type": "Tutorial Step - Improving a Plugin",
     "definition": {
-        "text": "Let's say you are a developer and are testing a new exchange. You wish to modify the Sensor Bot to introduce a new feature or param.",
+        "text": "About the second scenario: let's say you are testing the EMA indicator, found a bug and know how to fix it. You intend to contribute the fix so that everyone benefits from it!",
         "icon": {
-            "name": "sensor-bot",
-            "project": "Foundations"
+            "name": "indicator-bot",
+            "project": "Data-Mining"
         },
-        "updated": 1615996858987,
+        "updated": 1629909327051,
         "translations": [
             {
                 "language": "IT",
@@ -19,15 +19,22 @@
             {
                 "language": "ES",
                 "text": "Si eres un desarrollador y estás probando un nuevo exchange. Deseas modificar el Sensor Bot para introducir una nueva característica o parámetro.",
-                "updated": 1626710809333
+                "updated": 1626710809333,
+                "style": "Definition"
+            },
+            {
+                "language": "DE",
+                "text": "Zum zweiten Szenario: Nehmen wir an, Sie testen den EMA-Indikator, haben einen Fehler gefunden und wissen, wie man ihn beheben kann. Sie beabsichtigen, den Fehler zu beheben, damit alle davon profitieren!",
+                "updated": 1634589198766,
+                "style": "Definition"
             }
         ]
     },
     "paragraphs": [
         {
             "style": "Text",
-            "text": "The Sensor Bot is part of the Candles Data Mine, which is usually included as a plugin in most plugin workspaces. In such a case, you must proceed like in the previous case: enable saving and get to work! You can find your new modified file in the Plugins\\Data-Mines folder as if it was a backup.",
-            "updated": 1628350435675,
+            "text": "This Indicator Bot is part of the Sparta Data Mine, which is usually included as a plugin in some plugin workspaces. To modify the plugin from within the UI and save the changes, you have two options:",
+            "updated": 1629909479093,
             "translations": [
                 {
                     "language": "IT",
@@ -38,25 +45,39 @@
                 {
                     "language": "ES",
                     "text": "El Sensor Bot es parte del Candles Data Mine, que generalmente se incluye como plugin en la mayoría de los workspaces de plugins. En tal caso, debes proceder como en el caso anterior: eliminar el nodo Plugin File correspondiente a los  Candles Data Mine y restaurar el archivo de mina de datos desde la carpeta   Plugins\\Data-Mines como si fuera un backup.",
-                    "updated": 1626709343670
+                    "updated": 1626709343670,
+                    "style": "Text"
+                },
+                {
+                    "language": "DE",
+                    "text": "Dieser Indicator Bot ist Teil der Sparta Data Mine, die normalerweise als Plugin in einigen Plugin-Workspaces enthalten ist. Um das Plugin aus der UI Benutzeroberfläche heraus zu modifizieren und die Änderungen zu speichern, haben Sie zwei Möglichkeiten:",
+                    "updated": 1634589206307,
+                    "style": "Text"
                 }
             ]
         },
         {
-            "style": "Success",
-            "text": "Once you finish, submit a PR to contribute the improvements on the bot!",
-            "updated": 1628350465749,
+            "style": "List",
+            "text": "Go to the corresponding Plugin File in the Plugins hierarchy and select Enable Saving With Workspace on the menu. Now the plugin file is updated every time you save the workspace to include the changes you may have introduced!",
+            "updated": 1629909628165,
             "translations": [
                 {
-                    "language": "IT",
-                    "text": "Una volta finito, fai un backup del nuovo nodo Masters Data Mine e usalo per rimpiazzare il plugin file Masters! Assicurati di dargli lo stesso nome. Poi, apri una Pull Request per contribuire al miglioramento del bot!",
-                    "updated": 1619590866081,
-                    "style": "Success"
-                },
+                    "language": "DE",
+                    "text": "Gehen Sie zu dem entsprechenden Plugin File in der Plugins-Hierarchie und wählen Sie im Menü die Option Enable Saving With Workspace. Jetzt wird die Plugin-Datei jedes Mal aktualisiert, wenn Sie den Arbeitsbereich speichern, um die von Ihnen vorgenommenen Änderungen zu berücksichtigen!",
+                    "updated": 1634819321377
+                }
+            ]
+        },
+        {
+            "style": "List",
+            "text": "Or use the Save Plugin option to manually save the plugin file whenever you wish to!",
+            "updated": 1629909705348,
+            "translations": [
                 {
-                    "language": "ES",
-                    "text": "Toma un backup de los modificados nodos Candles Data Mine y usa el archivo de respaldo para reemplazar el archivo Candles plugin! ¡Asegúrate de darle el mismo nombre! Luego, envía un PR para contribuir con las mejoras en el bot.",
-                    "updated": 1626710763189
+                    "language": "DE",
+                    "text": "Oder verwenden Sie die Option \"Plugin speichern\", um die Plugin-Datei manuell zu speichern, wann immer Sie es wünschen!",
+                    "updated": 1634589217431,
+                    "style": "List"
                 }
             ]
         }

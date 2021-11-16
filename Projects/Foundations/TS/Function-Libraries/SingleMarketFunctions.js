@@ -91,12 +91,12 @@
                 return
             }
 
-            let botNode = TS.projects.foundations.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Indicator Bot')
+            let botNode = TS.projects.visualScripting.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Indicator Bot')
             if (botNode === undefined) {
-                botNode = TS.projects.foundations.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Trading Bot')
+                botNode = TS.projects.visualScripting.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Trading Bot')
             }
             if (botNode === undefined) {
-                botNode = TS.projects.foundations.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Learning Bot')
+                botNode = TS.projects.visualScripting.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Learning Bot')
             }
             if (botNode === undefined) {
                 TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME, "[ERROR] start -> Product Definition not attached to a Bot. ");
@@ -110,11 +110,11 @@
                 return
             }
 
-            let dataMineNode = TS.projects.foundations.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Data Mine')
+            let dataMineNode = TS.projects.visualScripting.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Data Mine')
             if (dataMineNode === undefined) {
-                let tradingMineNode = TS.projects.foundations.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Trading Mine')
+                let tradingMineNode = TS.projects.visualScripting.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Trading Mine')
                 if (tradingMineNode === undefined) {
-                    let learningMineNode = TS.projects.foundations.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Learning Mine')
+                    let learningMineNode = TS.projects.visualScripting.utilities.nodeFunctions.findNodeInNodeMesh(outputDatasetNode, 'Learning Mine')
                     if (learningMineNode === undefined) {
                         TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).BOT_MAIN_LOOP_LOGGER_MODULE_OBJECT.write(MODULE_NAME, "[ERROR] start -> Bot not attached to a Data Mine, Trading Mine or Learning Mine.");
                         callBackFunction(TS.projects.foundations.globals.standardResponses.DEFAULT_FAIL_RESPONSE);
@@ -146,7 +146,7 @@
 
     function inflateDatafiles(processIndex, dataFiles, dataDependencies, products, mainDependency, timeFrame) {
         /*
-        For each dataDependencyNode in our data dependencies, we should have a dataFile containing the records needed as an imput for this process.
+        For each dataDependencyNode in our data dependencies, we should have a dataFile containing the records needed as an input for this process.
         What we need to do first is transform those records into JSON objects that can be used by user-defined formulas.
         The first step does that but with the not calculated properties, the second step adds the calculated properties.
         */
@@ -219,7 +219,7 @@
 
         let system = { // These are the available system variables to be used in User Code and Formulas
             timeFrame: timeFrame,
-            ONE_DAY_IN_MILISECONDS: TS.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS
+            ONE_DAY_IN_MILISECONDS: SA.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS
         }
         let variable = {} // This is the structure where the user will define its own variables that will be shared across different code blocks and formulas.
         let results = []
@@ -312,8 +312,8 @@
         let yesterday = {}
         let system = { // These are the available system variables to be used in User Code and Formulas
             timeFrame: timeFrame,
-            ONE_DAY_IN_MILISECONDS: TS.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS,
-            ONE_MIN_IN_MILISECONDS: TS.projects.foundations.globals.timeConstants.ONE_MIN_IN_MILISECONDS
+            ONE_DAY_IN_MILISECONDS: SA.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS,
+            ONE_MIN_IN_MILISECONDS: SA.projects.foundations.globals.timeConstants.ONE_MIN_IN_MILISECONDS
         }
         let variable = {} // This is the structure where the user will define its own variables that will be shared across different code blocks and formulas.
         let results = []
@@ -350,7 +350,7 @@
         }
         /*
         This function allows users to locate an object at a dataset based on the begins and end properties 
-        of another object provided to the function as a parameter. For example, users can localte the 
+        of another object provided to the function as a parameter. For example, users can locate the
         bollinger band object that has the same begin and end than a candle object.
         */
         function getElement(dependencyName, currentRecordPrimaryDataDependency) {
@@ -360,7 +360,7 @@
         /*
         This function allows users to locate an object at a dataset whose objects does not have a begin and end
         property but instead, they have a timestamp property. It receives an arbitrary begin / end object and
-        the function will search within the dependency dataset for the first record whose timestamp is whitin 
+        the function will search within the dependency dataset for the first record whose timestamp is within
         the begin and end of the received reference objet. For example, a user can get the News record that belong
         to a certain Candle object.
         */
@@ -378,7 +378,7 @@
         Indicators might have parameters that influences it's calculations. These parameters
         are defined at the Product Definition config, and their values are set at the Process Instance config.
         Parameters are extracted at the Procedure Initialization Code. In order to facilitate this extraction
-        we will create an object here that will be accesed from the Procedure Initialization with all parameters
+        we will create an object here that will be accessed from the Procedure Initialization with all parameters
         and their defined values.
         */
         let parameters = {}
@@ -407,10 +407,10 @@
 
         if (processingDailyFiles) {
             /* Initialization of Last Instance */
-            lastInstantOfTheDay = currentDay.valueOf() + TS.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS - 1;
+            lastInstantOfTheDay = currentDay.valueOf() + SA.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS - 1;
 
             if (interExecutionMemory[productName] === undefined) {
-                /* The first time the intialization variables goes to the Inter Execution Memory. */
+                /* The first time the initialization variables goes to the Inter Execution Memory. */
                 interExecutionMemory[productName] = {}
                 interExecutionMemory[productName].variable = JSON.parse(JSON.stringify(variable))
             }
@@ -420,7 +420,7 @@
             }
         }
 
-        /* Here we run the Prcedure Loop Code */
+        /* Here we run the Procedure Loop Code */
         if (dataBuildingProcedure.loop !== undefined) {
             if (dataBuildingProcedure.loop.procedureJavascriptCode !== undefined) {
                 let lastRecord
@@ -507,7 +507,7 @@
 
                     if (resultsWithIrregularPeriods === true) {
                         /*
-                            Here we have an special problem that occurs when an object spans several time peridos. If not taken care of
+                            Here we have an special problem that occurs when an object spans several time periods. If not taken care of
                             it can happen that the object gets splitted between 2 days, which we dont want since it would loose some of
                             its properties.
  
@@ -515,7 +515,7 @@
                             at the next day, in whole, even if it starts in the previous day.
                         */
 
-                        let lastInstantOdDay = currentDay.valueOf() + TS.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS - 1;
+                        let lastInstantOdDay = currentDay.valueOf() + SA.projects.foundations.globals.timeConstants.ONE_DAY_IN_MILISECONDS - 1;
 
                         if (record.end < currentDay.valueOf() - 1) { continue; }
                         if (record.end === lastInstantOdDay) { continue; }
@@ -563,7 +563,7 @@
             let dateForPath = ''
 
             if (processingDailyFiles === true) {
-                dateForPath = "/" + currentDay.getUTCFullYear() + '/' + TS.projects.foundations.utilities.miscellaneousFunctions.pad(currentDay.getUTCMonth() + 1, 2) + '/' + TS.projects.foundations.utilities.miscellaneousFunctions.pad(currentDay.getUTCDate(), 2);
+                dateForPath = "/" + currentDay.getUTCFullYear() + '/' + SA.projects.foundations.utilities.miscellaneousFunctions.pad(currentDay.getUTCMonth() + 1, 2) + '/' + SA.projects.foundations.utilities.miscellaneousFunctions.pad(currentDay.getUTCDate(), 2);
             }
 
             let filePathRoot = 'Project/' + contextSummary.project + "/" + contextSummary.mineType + "/" + contextSummary.dataMine + "/" + contextSummary.bot + '/' + TS.projects.foundations.globals.taskConstants.TASK_NODE.parentNode.parentNode.parentNode.referenceParent.parentNode.parentNode.config.codeName + "/" + TS.projects.foundations.globals.taskConstants.TASK_NODE.parentNode.parentNode.parentNode.referenceParent.baseAsset.referenceParent.config.codeName + "-" + TS.projects.foundations.globals.taskConstants.TASK_NODE.parentNode.parentNode.parentNode.referenceParent.quotedAsset.referenceParent.config.codeName
@@ -607,7 +607,7 @@
         Here we check that the Task Node received, comes with all the upstream nodes that will be 
         needed to run this task in the context of a Single Market Bot.
         */
-        /* Validate that the minimun amount of input required are defined. */
+        /* Validate that the minimum amount of input required are defined. */
         if (TS.projects.foundations.globals.taskConstants.TASK_NODE.parentNode === undefined) {
             TS.projects.foundations.globals.loggerVariables.VARIABLES_BY_PROCESS_INDEX_MAP.get(processIndex).PROCESS_INSTANCE_LOGGER_MODULE_OBJECT.write(MODULE_NAME,
                 "[ERROR] checkUpstreamOfTaskNode -> Task without a Task Manager. This bot process will not run. -> Process Instance = " + JSON.stringify(TS.projects.foundations.globals.taskConstants.TASK_NODE.bot.processes[processIndex]));

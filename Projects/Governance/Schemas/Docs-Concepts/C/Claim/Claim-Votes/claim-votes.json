@@ -1,8 +1,15 @@
 {
     "type": "Claim Votes",
     "definition": {
-        "text": "Claim Votes is a generalization referring to either or all of the existing variations (Position Contribution Claim Vote, Feature Contribution Claim Vote, and Asset Contribution Claim Vote nodes) without making such a distinction for being irrelevant in the particular context.",
-        "updated": 1624781423463
+        "text": "In general terms, Claim Votes allow you to support the claims of other users. The term Claim Votes is a generalization referring to either or all of the existing types: Position Claim Vote, Feature Claim Vote, and Asset Claim Vote nodes.",
+        "updated": 1630343978470,
+        "translations": [
+            {
+                "language": "ES",
+                "text": "En términos generales Claim Votes le permite apoyar as solicitudes de otros usuarios. El término Claim Votes es una generalización que hace referencia a cualquiera a todos los tipos de nodos existentes: Position Claim Vote, Feature Claim Vote, y Asset Claim Vote.",
+                "updated": 1636109631180
+            }
+        ]
     },
     "paragraphs": [
         {
@@ -12,7 +19,15 @@
         },
         {
             "style": "Callout",
-            "text": "Claim Votes is a generalization referring to either or all of the existing variations (Position Contribution Claim Vote, Feature Contribution Claim Vote, and Asset Contribution Claim Vote nodes) without making such a distinction for being irrelevant in the particular context."
+            "text": "In general terms, Claim Votes allow you to support the claims of other users. The term Claim Votes is a generalization referring to either or all of the existing particular types: Position Claim Vote, Feature Claim Vote, and Asset Claim Vote nodes.",
+            "updated": 1630343984130,
+            "translations": [
+                {
+                    "language": "ES",
+                    "text": "En términos generales Claim Votes le permite apoyar as solicitudes de otros usuarios. El término Claim Votes es una generalización que hace referencia a cualquiera a todos los tipos de nodos existentes: Position Claim Vote, Feature Claim Vote, y Asset Claim Vote.",
+                    "updated": 1636109637753
+                }
+            ]
         }
     ]
 }

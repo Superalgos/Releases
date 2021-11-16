@@ -53,7 +53,7 @@ function newRecordValues() {
             */
             for (let index = 0; index < productRoot.length; index++) {
                 /*
-                The Product Root Node is the root of the node hiriarchy from where we are going to extract the record values.
+                The Product Root Node is the root of the node hierarchy from where we are going to extract the record values.
                 */
                 let productRootNode = productRoot[index]
                 scanProperties(productDefinition, productRootNode, index)
@@ -64,7 +64,7 @@ function newRecordValues() {
             the record to be saved at the output file.
             */
             /*
-            The Product Root Node is the root of the node hiriarchy from where we are going to extract the record values.
+            The Product Root Node is the root of the node hierarchy from where we are going to extract the record values.
             */
             let productRootNode = productRoot
             scanProperties(productDefinition, productRootNode)
@@ -133,6 +133,7 @@ function newRecordValues() {
         if (node.payload.uiObject === undefined) { return }
         if (value === true) { value = 'true' }
         if (value === false) { value = 'false' }
+        node.payload.uiObject.valueAtAngle = true
         node.payload.uiObject.setValue(value, 1, minDecimals)
     }
 }

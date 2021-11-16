@@ -6,7 +6,7 @@
         "text": "Let's get on with the task at hand! Copy the command below, paste it on the search/command box, and hit Enter!",
         "updated": 1610912478164,
         "icon": {
-            "name": "docs-json-code-style",
+            "name": "Docs\\docs-json-code-style",
             "project": "Foundations"
         },
         "translations": [
@@ -19,7 +19,13 @@
             {
                 "language": "ES",
                 "text": "¡Sigamos con la tarea que tenemos entre manos! Copia el comando a continuación, pégalo en el cuadro de búsqueda / comando y presiona Enter!",
-                "updated": 1628197068338
+                "updated": 1628197068338,
+                "style": "Definition"
+            },
+            {
+                "language": "DE",
+                "text": "Fangen wir mit der Aufgabe an, die vor uns liegt! Kopieren Sie den unten stehenden Befehl, fügen Sie ihn in das Such-/Befehlsfeld oben in den Docs ein und drücken Sie die Eingabetaste!",
+                "updated": 1635151557353
             }
         ]
     },
@@ -43,7 +49,13 @@
                 {
                     "language": "ES",
                     "text": "En Windows, aparece un cuadro de inicio de sesión de GitHub que ofrece la posibilidad de autenticarse con un token o contraseña. ¡Cualquiera debería funcionar! ¡Se requiere la última versión de Git! Si tienes problemas, reiniciar la PC puede ayudar. En Mac y Linux, es la Terminal la que solicita las credenciales. Si habilitaste la autenticación de dos factores en GitHub, usa el token incluso si se le solicita la contraseña.",
-                    "updated": 1628198214740
+                    "updated": 1628198214740,
+                    "style": "Important"
+                },
+                {
+                    "language": "DE",
+                    "text": "Unter Windows erscheint ein GitHub-Anmeldedialog, der Ihnen anbietet, sich mit Ihrem Token oder Passwort zu authentifizieren. Beides sollte funktionieren! Denken Sie daran, dass die neueste Version von Git erforderlich ist! Wenn Sie Probleme mit der neuesten Version haben, kann ein Neustart des PCs helfen. Auf Mac und Linux ist es das Terminal, das nach den Anmeldedaten fragt. Wenn Sie die Zwei-Faktor-Authentifizierung auf GitHub aktiviert haben, verwenden Sie den Token, auch wenn Sie nach dem Passwort gefragt werden!",
+                    "updated": 1635151571393
                 }
             ]
         }

@@ -14,13 +14,13 @@ function newUiObject() {
         isOnFocus: false,
         container: undefined,
         payload: undefined,
-        codeEditor: undefined,
-        configEditor: undefined,
         conditionEditor: undefined,
-        formulaEditor: undefined,
+        listSelector: undefined,
         uiObjectTitle: undefined,
+        icon: undefined,
         uiObjectMessage: undefined,
         circularProgressBar: undefined,
+        isLoading: undefined,
         isRunning: undefined,
         isPlaying: undefined,
         shortcutKey: undefined,
@@ -188,24 +188,17 @@ function newUiObject() {
         thisObject.fitFunction = undefined
         thisObject.isVisibleFunction = undefined
 
-        if (thisObject.codeEditor !== undefined) {
-            thisObject.codeEditor.finalize()
-            thisObject.codeEditor = undefined
-        }
 
-        if (thisObject.configEditor !== undefined) {
-            thisObject.configEditor.finalize()
-            thisObject.configEditor = undefined
-        }
 
         if (thisObject.conditionEditor !== undefined) {
             thisObject.conditionEditor.finalize()
             thisObject.conditionEditor = undefined
         }
 
-        if (thisObject.formulaEditor !== undefined) {
-            thisObject.formulaEditor.finalize()
-            thisObject.formulaEditor = undefined
+
+        if (thisObject.listSelector !== undefined) {
+            thisObject.listSelector.finalize()
+            thisObject.listSelector = undefined
         }
 
         icon = undefined
@@ -271,6 +264,10 @@ function newUiObject() {
 
         iconPhysics()
 
+        if (thisObject.icon === undefined) {
+            console.log('[ERROR] uiObject -> initialize -> err = Icon not found, Project: "' + thisObject.payload.node.project + '", Type: "' + thisObject.payload.node.type + '"')
+        }
+
         selfFocusEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onFocus', onFocus)
         selfNotFocusEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onNotFocus', onNotFocus)
         selfDisplaceEventSubscriptionId = thisObject.container.eventHandler.listenToEvent('onDisplace', onDisplace)
@@ -283,45 +280,27 @@ function newUiObject() {
         let container
 
         if (isDragging === false && thisObject.isOnFocus === true) {
-            if (thisObject.codeEditor !== undefined) {
-                container = thisObject.codeEditor.getContainer(point)
-                if (container !== undefined) { return container }
-            }
 
-            if (thisObject.configEditor !== undefined) {
-                container = thisObject.configEditor.getContainer(point)
-                if (container !== undefined) { return container }
-            }
 
             if (thisObject.conditionEditor !== undefined) {
                 container = thisObject.conditionEditor.getContainer(point)
                 if (container !== undefined) { return container }
             }
 
-            if (thisObject.formulaEditor !== undefined) {
-                container = thisObject.formulaEditor.getContainer(point)
+            if (thisObject.listSelector !== undefined) {
+                container = thisObject.listSelector.getContainer(point)
                 if (container !== undefined) { return container }
             }
 
             let getitle = true
 
-            if (thisObject.codeEditor !== undefined) {
-                if (thisObject.codeEditor.visible === true) {
-                    getitle = false
-                }
-            }
-            if (thisObject.configEditor !== undefined) {
-                if (thisObject.configEditor.visible === true) {
-                    getitle = false
-                }
-            }
             if (thisObject.conditionEditor !== undefined) {
                 if (thisObject.conditionEditor.visible === true) {
                     getitle = false
                 }
             }
-            if (thisObject.formulaEditor !== undefined) {
-                if (thisObject.formulaEditor.visible === true) {
+            if (thisObject.listSelector !== undefined) {
+                if (thisObject.listSelector.visible === true) {
                     getitle = false
                 }
             }
@@ -359,20 +338,14 @@ function newUiObject() {
         thisObject.menu.physics()
         thisObject.uiObjectMessage.physics()
 
-        if (thisObject.codeEditor !== undefined) {
-            thisObject.codeEditor.physics()
-        }
-
-        if (thisObject.configEditor !== undefined) {
-            thisObject.configEditor.physics()
-        }
 
         if (thisObject.conditionEditor !== undefined) {
             thisObject.conditionEditor.physics()
         }
 
-        if (thisObject.formulaEditor !== undefined) {
-            thisObject.formulaEditor.physics()
+
+        if (thisObject.listSelector !== undefined) {
+            thisObject.listSelector.physics()
         }
 
         if (thisObject.payload.chainParent === undefined || thisObject.payload.chainParent.payload === undefined) {
@@ -478,7 +451,7 @@ function newUiObject() {
                 if (floatingObject.payload === undefined) { continue }
                 let nearbyNode = floatingObject.payload.node
                 if (compatibleTypes.indexOf('->' + nearbyNode.type + '->') >= 0) {
-                    /* Discard App Schema defined objects with busy coonection ports */
+                    /* Discard App Schema defined objects with busy connection ports */
                     schemaDocument = getSchemaDocument(thisObject.payload.node)
                     if (schemaDocument !== undefined) {
                         let mustContinue = false
@@ -507,7 +480,7 @@ function newUiObject() {
                         if (mustContinue === true) { continue }
                     }
 
-                    /* Discard Phases without partent */
+                    /* Discard Phases without parent */
                     if (thisObject.payload.node.type === 'Phase' && nearbyNode.type === 'Phase' && nearbyNode.payload.parentNode === undefined) { continue }
                     /* Control maxPhases */
                     if (thisObject.payload.node.type === 'Phase') {
@@ -585,7 +558,7 @@ function newUiObject() {
             let THRESHOLD = 1.15
 
             if (ratio > THRESHOLD) {
-                UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Parent Detach', project: 'Foundations' })
+                UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Parent Detach', project: 'Visual-Scripting' })
             }
         }
 
@@ -692,7 +665,7 @@ function newUiObject() {
             let THRESHOLD = 1.15
 
             if (ratio > THRESHOLD) {
-                UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Reference Detach', project: 'Foundations' })
+                UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Reference Detach', project: 'Visual-Scripting' })
             }
         }
 
@@ -866,7 +839,7 @@ function newUiObject() {
             Next, we are going to try to inform the parent that this 
             node has an error, as a way to show the end user where the
             node with error is. This is useful to detect errors in nodes
-            that are located at braches that are collapsed.
+            that are located at branches that are collapsed.
             */
 
             if (thisObject.payload !== undefined) {
@@ -908,7 +881,7 @@ function newUiObject() {
             Next, we are going to try to inform the parent that this 
             node has an warning, as a way to show the end user where the
             node with warning is. This is useful to detect warnings in nodes
-            that are located at braches that are collapsed.
+            that are located at branches that are collapsed.
             */
 
             if (thisObject.payload !== undefined) {
@@ -950,7 +923,7 @@ function newUiObject() {
             Next, we are going to try to inform the parent that this 
             node has an info, as a way to show the end user where the
             node with info is. This is useful to detect infos in nodes
-            that are located at braches that are collapsed.
+            that are located at branches that are collapsed.
             */
 
             if (thisObject.payload !== undefined) {
@@ -1251,7 +1224,7 @@ function newUiObject() {
         node that actually has the icon list.
 
         On the other hand, if this icon has the icon list definition, then the value of alternativeIcons
-        shoudl be an array of the possible icons. Then to pick one icon from that list we will check 
+        should be an array of the possible icons. Then to pick one icon from that list we will check
         the config.condeName of the node to see with which icon on the list matches.
 
         Finally, if the node we are pointing to does not have a config or does not have a list of 
@@ -1317,6 +1290,7 @@ function newUiObject() {
             }
         }
 
+        thisObject.icon = icon
         executingIcon = UI.projects.foundations.spaces.designSpace.getIconByProjectAndName('Foundations', 'bitcoin')
     }
 
@@ -1334,17 +1308,13 @@ function newUiObject() {
 
     function onNotFocus() {
         thisObject.isOnFocus = false
-        if (thisObject.codeEditor !== undefined) {
-            thisObject.codeEditor.deactivate()
-        }
-        if (thisObject.configEditor !== undefined) {
-            thisObject.configEditor.deactivate()
-        }
+
         if (thisObject.conditionEditor !== undefined) {
             thisObject.conditionEditor.deactivate()
         }
-        if (thisObject.formulaEditor !== undefined) {
-            thisObject.formulaEditor.deactivate()
+
+        if (thisObject.listSelector !== undefined) {
+            thisObject.listSelector.deactivate()
         }
 
         if (thisObject.payload !== undefined &&
@@ -1362,17 +1332,12 @@ function newUiObject() {
 
     function onDragStarted(event) {
         thisObject.uiObjectTitle.exitEditMode()
-        if (thisObject.codeEditor !== undefined) {
-            thisObject.codeEditor.deactivate()
-        }
-        if (thisObject.configEditor !== undefined) {
-            thisObject.configEditor.deactivate()
-        }
+
         if (thisObject.conditionEditor !== undefined) {
             thisObject.conditionEditor.deactivate()
         }
-        if (thisObject.formulaEditor !== undefined) {
-            thisObject.formulaEditor.deactivate()
+        if (thisObject.listSelector !== undefined) {
+            thisObject.listSelector.deactivate()
         }
         isDragging = true
         if (event.button === 2) {
@@ -1387,14 +1352,14 @@ function newUiObject() {
 
     function onDragFinished(event) {
         if (isChainAttaching === true) {
-            UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Parent Attach', project: 'Foundations', relatedNode: chainAttachToNode })
+            UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Parent Attach', project: 'Visual-Scripting', relatedNode: chainAttachToNode })
             chainAttachToNode = undefined
             isChainAttaching = false
             /* We want to avoid the situation in which we are attaching a node to its parent and at the same time referencing another node. */
             isReferenceAttaching = false
         }
         if (isReferenceAttaching === true) {
-            UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Reference Attach', project: 'Foundations', relatedNode: referenceAttachToNode })
+            UI.projects.foundations.spaces.designSpace.workspace.executeAction({ node: thisObject.payload.node, name: 'Reference Attach', project: 'Visual-Scripting', relatedNode: referenceAttachToNode })
             referenceAttachToNode = undefined
             isReferenceAttaching = false
         }
@@ -1433,9 +1398,6 @@ function newUiObject() {
     function drawForeground() {
         if (thisObject.isOnFocus === false) {
             drawBodyAndPicture()
-            if (isDragging === false) {
-                thisObject.menu.drawForeground()
-            }
         }
 
         if (thisObject.circularProgressBar !== undefined) {
@@ -1448,46 +1410,31 @@ function newUiObject() {
             drawReferenceLine()
             drawChainLine()
 
-            if (thisObject.codeEditor !== undefined) {
-                thisObject.codeEditor.drawBackground()
-                thisObject.codeEditor.drawForeground()
-            }
-            if (thisObject.configEditor !== undefined) {
-                thisObject.configEditor.drawBackground()
-                thisObject.configEditor.drawForeground()
-            }
+
+
             if (thisObject.conditionEditor !== undefined) {
                 thisObject.conditionEditor.drawBackground()
                 thisObject.conditionEditor.drawForeground()
             }
-            if (thisObject.formulaEditor !== undefined) {
-                thisObject.formulaEditor.drawBackground()
-                thisObject.formulaEditor.drawForeground()
+
+            if (thisObject.listSelector !== undefined) {
+                thisObject.listSelector.drawBackground()
+                thisObject.listSelector.drawForeground()
             }
 
             let drawMenu = true
             let drawTitle = true
 
-            if (thisObject.codeEditor !== undefined) {
-                if (thisObject.codeEditor.visible === true) {
-                    drawMenu = false
-                    drawTitle = false
-                }
-            }
-            if (thisObject.configEditor !== undefined) {
-                if (thisObject.configEditor.visible === true) {
-                    drawMenu = false
-                    drawTitle = false
-                }
-            }
+
             if (thisObject.conditionEditor !== undefined) {
                 if (thisObject.conditionEditor.visible === true) {
                     drawMenu = false
                     drawTitle = false
                 }
             }
-            if (thisObject.formulaEditor !== undefined) {
-                if (thisObject.formulaEditor.visible === true) {
+
+            if (thisObject.listSelector !== undefined) {
+                if (thisObject.listSelector.visible === true) {
                     drawMenu = false
                     drawTitle = false
                 }
@@ -1654,20 +1601,15 @@ function newUiObject() {
     }
 
     function isEditorVisible() {
-        if (thisObject.codeEditor !== undefined) {
-            if (thisObject.codeEditor.visible === true) { return true }
-        }
 
-        if (thisObject.configEditor !== undefined) {
-            if (thisObject.configEditor.visible === true) { return true }
-        }
+
 
         if (thisObject.conditionEditor !== undefined) {
             if (thisObject.conditionEditor.visible === true) { return true }
         }
 
-        if (thisObject.formulaEditor !== undefined) {
-            if (thisObject.formulaEditor.visible === true) { return true }
+        if (thisObject.listSelector !== undefined) {
+            if (thisObject.listSelector.visible === true) { return true }
         }
     }
 
@@ -1683,6 +1625,13 @@ function newUiObject() {
 
         if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
             position = UI.projects.foundations.spaces.floatingSpace.transformPointToMap(position)
+
+            let schemaDocument = getSchemaDocument(thisObject.payload.node)
+            if (schemaDocument.inMapMode !== undefined) {
+                if (schemaDocument.inMapMode.showNodeType === false) {
+                    return
+                }
+            }
         }
 
         let radius = thisObject.payload.floatingObject.container.frame.radius
@@ -2104,276 +2053,326 @@ function newUiObject() {
                 return
             }
 
-            if (thisObject.isOnFocus === true) {
-                /* Black Translucent Background when node is in focus */
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.fillStyle = 'rgba(' + UI.projects.foundations.spaces.floatingSpace.style.backgroundColor + ', 0.70)'
-                browserCanvasContext.fill()
-                /* Border when node is in focus */
-                if (
-                    thisObject.hasError !== true &&
-                    thisObject.WarningError !== true &&
-                    thisObject.hasInfo !== true &&
-                    schemaDocument.isHierarchyHead !== true &&
-                    thisObject.circularProgressBar === undefined
-                ) {
+            drawOnFocus()
+            drawHierarchyHeadRing()
+            drawProjectHeadRing()
+            drawInfoRing()
+            drawWarningRing() 
+            drawErrorRing()
+            drawHighlighted()
+            drawReadyToChainAttach()
+            drawAvailableToChainAttach()
+            drawReadyToReferenceAttach()
+            drawAvailableToReferenceAttach()
+
+            function drawOnFocus() {
+                if (thisObject.isOnFocus === true) {
+                    /* Black Translucent Background when node is in focus */
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
                     browserCanvasContext.beginPath()
                     browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
                     browserCanvasContext.closePath()
-                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.WHITE + ', ' + 1 + ')'
-                    browserCanvasContext.lineWidth = 3
-                    browserCanvasContext.setLineDash([]) // Resets Line Dash
+                    browserCanvasContext.fillStyle = 'rgba(' + UI.projects.foundations.spaces.floatingSpace.style.backgroundColor + ', 0.70)'
+                    browserCanvasContext.fill()
+                    /* Border when node is in focus */
+                    if (
+                        thisObject.hasError !== true &&
+                        thisObject.WarningError !== true &&
+                        thisObject.hasInfo !== true &&
+                        schemaDocument.isHierarchyHead !== true &&
+                        thisObject.circularProgressBar === undefined
+                    ) {
+                        browserCanvasContext.beginPath()
+                        browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                        browserCanvasContext.closePath()
+                        browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.WHITE + ', ' + 1 + ')'
+                        browserCanvasContext.lineWidth = 3
+                        browserCanvasContext.setLineDash([]) // Resets Line Dash
+                        browserCanvasContext.stroke()
+
+                        browserCanvasContext.beginPath()
+                        browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS - 1, 0, Math.PI * 2, true)
+                        browserCanvasContext.closePath()
+                        browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + 1 + ')'
+                        browserCanvasContext.lineWidth = 2
+                        browserCanvasContext.setLineDash([]) // Resets Line Dash
+                        browserCanvasContext.stroke()
+
+                    }
+                }
+            }
+
+            function drawHierarchyHeadRing() {
+                /* Hierarchy Head Ring */
+                if (schemaDocument.isHierarchyHead === true) {
+
+                    if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                        if (schemaDocument.inMapMode !== undefined) {
+                            if (schemaDocument.inMapMode.showHierarchyHeadRing === false) {
+                                return
+                            }
+                        }
+                    }
+
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
+                    if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                        VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+                    }
+                    let OPACITY = 0.5
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT_GREY + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 10
+                    browserCanvasContext.setLineDash([1, 10])
                     browserCanvasContext.stroke()
 
                     browserCanvasContext.beginPath()
-                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS - 1, 0, Math.PI * 2, true)
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
                     browserCanvasContext.closePath()
-                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + 1 + ')'
-                    browserCanvasContext.lineWidth = 2
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT_GREY + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 1
+                    if (thisObject.payload.node.isPlugin === true) {
+                        browserCanvasContext.setLineDash([]) // Resets Line Dash
+                    } else {
+                        browserCanvasContext.setLineDash([10, 20])
+                    }
+                    browserCanvasContext.stroke()
                     browserCanvasContext.setLineDash([]) // Resets Line Dash
+                }
+            }
+
+            function drawProjectHeadRing() {
+                /* Project Head Ring */
+                if (schemaDocument.isProjectHead === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
+                    if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                        VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+                    }
+                    let OPACITY = 0.5
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + OPACITY + ')'
+
+                    if (thisObject.payload.floatingObject.isOnFocus === true) {
+                        browserCanvasContext.lineWidth = 30
+                        browserCanvasContext.setLineDash([]) // Resets Line Dash
+                    } else {
+                        browserCanvasContext.lineWidth = 30
+                        browserCanvasContext.setLineDash([1, 3])
+
+                    }
+                    browserCanvasContext.stroke()
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
+                }
+            }
+
+            function drawInfoRing() {
+                /* Info Ring */
+                if (thisObject.hasInfo === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
+                    if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                        VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+                    }
+                    let OPACITY = infoMessageCounter / 30
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 5
+                    browserCanvasContext.setLineDash([2 + infoRingAnimation, 14 - infoRingAnimation])
+                    browserCanvasContext.stroke()
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
+                }
+            }
+
+            function drawWarningRing() {
+                /* Warning Ring */
+                if (thisObject.hasWarning === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
+                    if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                        VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+                    }
+                    let OPACITY = warningMessageCounter / 30
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 5
+                    browserCanvasContext.setLineDash([2 + warningRingAnimation, 14 - warningRingAnimation])
+                    browserCanvasContext.stroke()
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
+                }
+            }
+
+            function drawErrorRing() {
+                /* Error Ring */
+                if (thisObject.hasError === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
+                    if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                        VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+                    }
+                    let OPACITY = errorMessageCounter / 30
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RED + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 5
+                    browserCanvasContext.setLineDash([2 + errorRingAnimation, 14 - errorRingAnimation])
+                    browserCanvasContext.stroke()
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
+                }
+            }
+
+            function drawHighlighted() {
+                if (isHighlighted === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
+                    let OPACITY = highlightCounter / 10
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+
+                    browserCanvasContext.lineWidth = 10
+                    browserCanvasContext.setLineDash([4, 20])
+                    browserCanvasContext.stroke()
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
+                }
+            }
+
+            function drawReadyToChainAttach() {
+                if (isReadyToChainAttach === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5 + readyToChainAttachDisplayCounter - readyToChainAttachDisplayCounter / 2
+                    let OPACITY = readyToChainAttachCounter / 10
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 10
+                    browserCanvasContext.setLineDash([10, 90])
                     browserCanvasContext.stroke()
 
-                }
-            }
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 5
+                    browserCanvasContext.setLineDash([5, 45])
+                    browserCanvasContext.stroke()
 
-            /* Hierarchy Head Ring */
-            if (schemaDocument.isHierarchyHead === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
-                    VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
-                }
-                let OPACITY = 0.5
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 1
+                    browserCanvasContext.setLineDash([2, 8])
+                    browserCanvasContext.stroke()
 
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT_GREY + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 10
-                browserCanvasContext.setLineDash([1, 10])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.LIGHT_GREY + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 1
-                if (thisObject.payload.node.isPlugin === true) {
                     browserCanvasContext.setLineDash([]) // Resets Line Dash
-                } else {
-                    browserCanvasContext.setLineDash([10, 20])
                 }
-                browserCanvasContext.stroke()
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
             }
 
-            /* Project Head Ring */
-            if (schemaDocument.isProjectHead === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
-                    VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
-                }
-                let OPACITY = 0.5
+            function drawAvailableToChainAttach() {
+                if (isAvailableToChainAttach === true && isReadyToChainAttach === false) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5
+                    let OPACITY = availableToChainAttachCounter / 10
 
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + OPACITY + ')'
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TURQUOISE + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 10
+                    browserCanvasContext.setLineDash([8, 32])
+                    browserCanvasContext.stroke()
 
-                if (thisObject.payload.floatingObject.isOnFocus === true) {
-                    browserCanvasContext.lineWidth = 30
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TURQUOISE + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 2
+                    browserCanvasContext.setLineDash([3, 5])
+                    browserCanvasContext.stroke()
+
                     browserCanvasContext.setLineDash([]) // Resets Line Dash
-                } else {
-                    browserCanvasContext.lineWidth = 30
-                    browserCanvasContext.setLineDash([1, 3])
-
                 }
-                browserCanvasContext.stroke()
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
             }
 
-            /* Info Ring */
-            if (thisObject.hasInfo === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
-                    VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+            function drawReadyToReferenceAttach() {
+                if (isReadyToReferenceAttach === true) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5 + readyToReferenceAttachDisplayCounter - readyToReferenceAttachDisplayCounter / 2
+                    let OPACITY = readyToReferenceAttachCounter / 10
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GOLDEN_ORANGE + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 10
+                    browserCanvasContext.setLineDash([10, 90])
+                    browserCanvasContext.stroke()
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GOLDEN_ORANGE + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 5
+                    browserCanvasContext.setLineDash([5, 45])
+                    browserCanvasContext.stroke()
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GOLDEN_ORANGE + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 1
+                    browserCanvasContext.setLineDash([2, 8])
+                    browserCanvasContext.stroke()
+
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
                 }
-                let OPACITY = infoMessageCounter / 30
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.DARK_TURQUOISE + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 5
-                browserCanvasContext.setLineDash([2 + infoRingAnimation, 14 - infoRingAnimation])
-                browserCanvasContext.stroke()
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
             }
 
-            /* Warning Ring */
-            if (thisObject.hasWarning === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
-                    VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
+            function drawAvailableToReferenceAttach() {
+                if (isAvailableToReferenceAttach === true && isReadyToReferenceAttach === false) {
+                    VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5
+                    let OPACITY = availableToReferenceAttachCounter / 10
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GREY + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 10
+                    browserCanvasContext.setLineDash([8, 32])
+                    browserCanvasContext.stroke()
+
+                    browserCanvasContext.beginPath()
+                    browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
+                    browserCanvasContext.closePath()
+                    browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GREY + ', ' + OPACITY + ')'
+                    browserCanvasContext.lineWidth = 2
+                    browserCanvasContext.setLineDash([3, 5])
+                    browserCanvasContext.stroke()
+
+                    browserCanvasContext.setLineDash([]) // Resets Line Dash
                 }
-                let OPACITY = warningMessageCounter / 30
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 5
-                browserCanvasContext.setLineDash([2 + warningRingAnimation, 14 - warningRingAnimation])
-                browserCanvasContext.stroke()
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
-            }
-
-            /* Error Ring */
-            if (thisObject.hasError === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
-                    VISIBLE_RADIUS = UI.projects.foundations.spaces.floatingSpace.transformRadiusToMap(VISIBLE_RADIUS)
-                }
-                let OPACITY = errorMessageCounter / 30
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.RED + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 5
-                browserCanvasContext.setLineDash([2 + errorRingAnimation, 14 - errorRingAnimation])
-                browserCanvasContext.stroke()
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
-            }
-
-            if (isHighlighted === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius
-                let OPACITY = highlightCounter / 10
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
-
-                browserCanvasContext.lineWidth = 10
-                browserCanvasContext.setLineDash([4, 20])
-                browserCanvasContext.stroke()
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
-            }
-
-            if (isReadyToChainAttach === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5 + readyToChainAttachDisplayCounter - readyToChainAttachDisplayCounter / 2
-                let OPACITY = readyToChainAttachCounter / 10
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 10
-                browserCanvasContext.setLineDash([10, 90])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 5
-                browserCanvasContext.setLineDash([5, 45])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TITANIUM_YELLOW + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 1
-                browserCanvasContext.setLineDash([2, 8])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
-            }
-
-            if (isAvailableToChainAttach === true && isReadyToChainAttach === false) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5
-                let OPACITY = availableToChainAttachCounter / 10
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TURQUOISE + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 10
-                browserCanvasContext.setLineDash([8, 32])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.TURQUOISE + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 2
-                browserCanvasContext.setLineDash([3, 5])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
-            }
-
-            if (isReadyToReferenceAttach === true) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5 + readyToReferenceAttachDisplayCounter - readyToReferenceAttachDisplayCounter / 2
-                let OPACITY = readyToReferenceAttachCounter / 10
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GOLDEN_ORANGE + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 10
-                browserCanvasContext.setLineDash([10, 90])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GOLDEN_ORANGE + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 5
-                browserCanvasContext.setLineDash([5, 45])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GOLDEN_ORANGE + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 1
-                browserCanvasContext.setLineDash([2, 8])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
-            }
-
-            if (isAvailableToReferenceAttach === true && isReadyToReferenceAttach === false) {
-                VISIBLE_RADIUS = thisObject.payload.floatingObject.container.frame.radius * 2.5
-                let OPACITY = availableToReferenceAttachCounter / 10
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GREY + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 10
-                browserCanvasContext.setLineDash([8, 32])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.beginPath()
-                browserCanvasContext.arc(visiblePosition.x, visiblePosition.y, VISIBLE_RADIUS, 0, Math.PI * 2, true)
-                browserCanvasContext.closePath()
-                browserCanvasContext.strokeStyle = 'rgba(' + UI_COLOR.GREY + ', ' + OPACITY + ')'
-                browserCanvasContext.lineWidth = 2
-                browserCanvasContext.setLineDash([3, 5])
-                browserCanvasContext.stroke()
-
-                browserCanvasContext.setLineDash([]) // Resets Line Dash
             }
         }
 
         /* Image */
-
         if (icon !== undefined) {
             if (icon.canDrawIcon === true) {
+
+                // If this UiObject is being loaded then display at half opacity
+                if(thisObject.payload.isLoading === true) {
+                    browserCanvasContext.globalAlpha = 0.5
+                } else {
+                    browserCanvasContext.globalAlpha = 1
+                }
+
                 let additionalImageSize = 0
                 if (isRunningAtBackend === true || isReadyToReferenceAttach === true || isReadyToChainAttach === true) { additionalImageSize = 20 }
                 let totalImageSize = additionalImageSize + thisObject.payload.floatingObject.currentImageSize
@@ -2394,11 +2393,21 @@ function newUiObject() {
                     totalImageSize = 50
                 }
 
+                if (UI.projects.foundations.spaces.floatingSpace.inMapMode === true) {
+                    if (schemaDocument.inMapMode !== undefined) {
+                        if (schemaDocument.inMapMode.smallIcon === true) {
+                            totalImageSize = totalImageSize * 0.75
+                        }
+                    }
+                }
+
                 browserCanvasContext.drawImage(
                     icon, position.x - totalImageSize / 2,
                     position.y - totalImageSize / 2,
                     totalImageSize,
                     totalImageSize)
+
+                browserCanvasContext.globalAlpha = 1
             }
         }
 
